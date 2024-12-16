@@ -80,6 +80,7 @@
     "@opentiny/vue-date-panel": "workspace:~",
     "@opentiny/vue-date-picker": "workspace:~",
     "@opentiny/vue-date-picker-mobile-first": "workspace:~",
+    "@opentiny/vue-date-picker-panel": "workspace:~",
     "@opentiny/vue-date-range": "workspace:~",
     "@opentiny/vue-date-table": "workspace:~",
     "@opentiny/vue-dept": "workspace:~",

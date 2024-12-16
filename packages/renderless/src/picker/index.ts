@@ -1099,6 +1099,7 @@ export const handleSelectRange = (state) => (start, end, pos) => {
 export const mountPicker =
   ({ api, props, state, vm, updatePopper }) =>
   () => {
+    console.info('rt(222', props)
     state.picker = vm.$refs.picker
     state.picker.state.defaultValue = props.defaultValue
     state.picker.state.defaultTime = props.defaultTime

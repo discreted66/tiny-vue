@@ -13,6 +13,11 @@ import DatePanel from './src/index'
 import '@opentiny/vue-theme/date-panel/index.less'
 import { version } from './package.json'
 
+DatePanel.model = {
+  prop: 'modelValue',
+  event: 'update:modelValue'
+}
+
 /* istanbul ignore next */
 DatePanel.install = function (Vue) {
   Vue.component(DatePanel.name, DatePanel)

@@ -12,7 +12,6 @@
 <template>
   <transition name="tiny-zoom-in-top" @after-enter="handleEnter" @after-leave="handleLeave">
     <div
-      v-show="state.visible"
       class="tiny-picker-panel tiny-date-picker tiny-popper"
       :class="[
         {
@@ -299,10 +298,17 @@ export default defineComponent({
     },
     nowClick: {
       type: Function
+    },
+    modelValue: {},
+    defaultPanelValue: {
+      type: String,
+      default: ''
     }
   },
-  emits: ['pick', 'select-change', 'dodestroy'],
+  emits: ['pick', 'select-change', 'update:modelValue', 'dodestroy'],
+
   setup(props, context) {
+    console.info('******************', props.defaultPanelValue)
     return setup({
       props,
       context,

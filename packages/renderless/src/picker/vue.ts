@@ -183,7 +183,7 @@ const initApi = ({ api, props, hooks, state, vnode, others, utils, parent }) => 
 
   state.popperElm = popperElm
   state.picker = null
-
+  ////
   Object.assign(api, {
     destroyPopper,
     emitDbTime: emitDbTime({ emit, state, t }),
@@ -310,6 +310,7 @@ export const renderless = (
   const { utils = {} } = service || {}
   const breakpoint = useBreakpoint()
   const state = initState({ api, reactive, vm, computed, props, utils, parent, inject, breakpoint })
+  console.info('--999999---------------', props)
 
   parent.tinyForm = parent.tinyForm || inject('form', null)
 
@@ -319,6 +320,10 @@ export const renderless = (
   api.initGlobalTimezone()
 
   onMounted(() => {
+    // if (props.onlyPanel) {
+    //   props.popperAppendToBody = false
+    //   api.showPicker()
+    // }
     api.setInputPaddingLeft()
   })
 

@@ -20,6 +20,14 @@ export default defineComponent({
     formatWeeks: Function,
     nowClick: {
       type: Function
+    },
+    defaultPanelValue: {
+      type: String,
+      default: ''
+    },
+    modelValue: {
+      type: String,
+      default: ''
     }
   },
   setup(props, context) {

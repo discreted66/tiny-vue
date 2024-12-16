@@ -83,13 +83,14 @@ export const api = [
   'handleEnter',
   'handleVisibleTimeChange',
   'handleVisibleDateChange',
+  'handleSelectChange',
   'handleLeave',
   'handleShortcutClick',
   'handleTimePickClose',
   'getNowTime'
 ]
 
-const initState = ({ reactive, computed, api, i18n, designConfig }) => {
+const initState = ({ reactive, computed, api, i18n, designConfig, props }) => {
   const state = reactive({
     popperClass: '',
     date: new Date(),
@@ -143,7 +144,19 @@ const initState = ({ reactive, computed, api, i18n, designConfig }) => {
   return state
 }
 
-const initWatch = ({ watch, state, api, nextTick }) => {
+const initWatch = ({ watch, state, api, nextTick, props }) => {
+  watch(
+    () => props.defaultPanelValue,
+    (val) => {
+      console.info('dsdasdasd', val)
+      state.defaultValue = val
+      state.value = val
+      state.date = val
+      // props.modelValue = val
+    },
+    { immediate: true }
+  )
+
   watch(
     () => state.isShowTz,
     () => {
@@ -221,6 +234,7 @@ const initApi = ({ api, state, t, emit, nextTick, vm, watch, props }) => {
     handleTimePick: handleTimePick({ api, state, t }),
     handleYearPick: handleYearPick({ api, state }),
     handleDatePick: handleDatePick({ api, state, t }),
+    handleSelectChange: emit('select-change', state.date),
     computerVisibleTime: computerVisibleTime({ state, t }),
     handleShortcutClick: handleShortcutClick(api),
     computerVisibleDate: computerVisibleDate({ state, t }),
@@ -239,10 +253,10 @@ export const renderless = (
 ) => {
   const api = {}
   const emit = props.emitter ? props.emitter.emit : $emit
-  const state = initState({ reactive, computed, api, i18n, designConfig })
+  const state = initState({ reactive, computed, api, i18n, designConfig, props })
 
   initApi({ api, state, t, emit, nextTick, vm, watch, props })
-  initWatch({ watch, state, api, nextTick })
+  initWatch({ watch, state, api, nextTick, props })
 
   return api
 }
