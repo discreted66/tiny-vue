@@ -1,9 +1,19 @@
 {
   "name": "@opentiny/vue",
-  "private": true,
+  "type": "module",
   "version": "3.20.0",
+  "private": true,
   "description": "An enterprise-class UI component library, support both Vue.js 2 and Vue.js 3, as well as PC and mobile.",
+  "author": "OpenTiny Team",
+  "license": "MIT",
   "homepage": "https://opentiny.design/tiny-vue",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:opentiny/tiny-vue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/opentiny/tiny-vue/issues"
+  },
   "keywords": [
     "vue",
     "vue3",
@@ -15,18 +25,12 @@
     "renderless-components",
     "headless-components"
   ],
-  "author": "OpenTiny Team",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:opentiny/tiny-vue.git"
-  },
-  "bugs": {
-    "url": "https://github.com/opentiny/tiny-vue/issues"
-  },
-  "type": "module",
-  "main": "index.ts",
   "sideEffects": false,
+  "main": "index.ts",
+  "scripts": {
+    "build": "pnpm -w build:ui",
+    "postversion": "pnpm build"
+  },
   "dependencies": {
     "@opentiny/vue-action-menu": "workspace:~",
     "@opentiny/vue-action-sheet": "workspace:~",
@@ -80,7 +84,6 @@
     "@opentiny/vue-date-panel": "workspace:~",
     "@opentiny/vue-date-picker": "workspace:~",
     "@opentiny/vue-date-picker-mobile-first": "workspace:~",
-    "@opentiny/vue-date-picker-panel": "workspace:~",
     "@opentiny/vue-date-range": "workspace:~",
     "@opentiny/vue-date-table": "workspace:~",
     "@opentiny/vue-dept": "workspace:~",
@@ -272,9 +275,5 @@
     "vue2": "npm:vue@2.6.14",
     "vue2.7": "npm:vue@2.7.10",
     "vue3": "npm:vue@3.3.9"
-  },
-  "scripts": {
-    "build": "pnpm -w build:ui",
-    "postversion": "pnpm build"
   }
 }

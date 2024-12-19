@@ -152,9 +152,8 @@ const initWatch = ({ watch, state, api, nextTick, props }) => {
       state.defaultValue = val
       state.value = val
       state.date = val
-      // props.modelValue = val
-    },
-    { immediate: true }
+      emit('update:panelValue', val)
+    }
   )
 
   watch(
@@ -248,7 +247,7 @@ const initApi = ({ api, state, t, emit, nextTick, vm, watch, props }) => {
 
 export const renderless = (
   props,
-  { computed, reactive, watch, nextTick },
+  { computed, reactive, watch, nextTick, getCurrentInstance, onMounted },
   { t, emit: $emit, vm, i18n, designConfig }
 ) => {
   const api = {}
@@ -257,6 +256,17 @@ export const renderless = (
 
   initApi({ api, state, t, emit, nextTick, vm, watch, props })
   initWatch({ watch, state, api, nextTick, props })
+
+  onMounted(() => {
+    const instance = getCurrentInstance()
+    const isDirectUsage = !instance.vnode.component
+
+    if (isDirectUsage) {
+      console.log('该组件是直接使用的。')
+    } else {
+      console.log('该组件是通过 <component :is="..."> 套用的。')
+    }
+  })
 
   return api
 }

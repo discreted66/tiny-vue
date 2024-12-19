@@ -151,16 +151,23 @@ export const handleClear =
 export const cusEmit =
   ({ state, emit }) =>
   (value, ...args) => {
+    console.info('cusEmit', value)
     if (!value) {
       emit('pick', value, ...args)
+      emit('select-panel-change', value, ...args)
+      emit('update:panelValue', value, ...args)
     } else if (Array.isArray(value)) {
       const dates = value.map((date) => (state.showTime ? clearMilliseconds(date) : clearTime(date)))
 
       emit('pick', dates, ...args)
+      emit('select-panel-change', dates, ...args)
+      emit('update:panelValue', dates, ...args)
     } else {
       emit('pick', state.showTime ? clearMilliseconds(value) : clearTime(value), ...args)
+      emit('select-panel-change', state.showTime ? clearMilliseconds(value) : clearTime(value), ...args)
+      emit('update:panelValue', state.showTime ? clearMilliseconds(value) : clearTime(value), ...args)
     }
-
+    // resetView({ state })
     state.userInputDate = null
     state.userInputTime = null
   }

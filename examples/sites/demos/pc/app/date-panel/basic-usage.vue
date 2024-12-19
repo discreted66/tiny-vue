@@ -5,11 +5,10 @@
       ref="datePanel"
       readonly
       :default-panel-value="defaultDate"
-      v-model="value"
-      @select-change="handleSelectChange"
-      @change="handleSelectChange"
+      v-model:panelValue="value"
+      @select-panel-change="handleSelectChange"
     ></tiny-date-panel>
-    <tiny-date-range v-model="value1" @select-change="handleSelectChange"></tiny-date-range>
+    <tiny-date-range v-model="value1" @select-panel-change="handleSelectChange"></tiny-date-range>
   </div>
 </template>
 

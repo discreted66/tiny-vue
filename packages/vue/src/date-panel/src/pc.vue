@@ -299,13 +299,16 @@ export default defineComponent({
     nowClick: {
       type: Function
     },
-    modelValue: {},
+    panelValue: {
+      type: Date || String,
+      default: ''
+    },
     defaultPanelValue: {
       type: String,
-      default: ''
+      default: new Date()
     }
   },
-  emits: ['pick', 'select-change', 'update:modelValue', 'dodestroy'],
+  emits: ['pick', 'select-panel-change', 'update:panelValue', 'dodestroy'],
 
   setup(props, context) {
     console.info('******************', props.defaultPanelValue)
