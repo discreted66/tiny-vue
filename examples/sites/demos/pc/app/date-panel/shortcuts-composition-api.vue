@@ -1,6 +1,6 @@
 <template>
   <div class="demo-date-panel-wrap">
-    <div>{{ value }}</div>
+    <div class="value">{{ value }}</div>
     <tiny-date-panel v-model="value" :shortcuts="shortcuts"></tiny-date-panel>
   </div>
 </template>
@@ -15,7 +15,6 @@ const shortcuts = [
     text: '今天',
     onClick(picker) {
       const date = new Date()
-      console.info(picker)
       picker.$emit('pick', date)
     }
   },
