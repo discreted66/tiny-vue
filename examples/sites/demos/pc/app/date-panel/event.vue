@@ -1,7 +1,7 @@
 <template>
   <div class="demo-date-panel-wrap">
     <div>{{ value }}</div>
-    <tiny-date-panel v-model="value" @select-panel-change="handleSelectChange"></tiny-date-panel>
+    <tiny-date-panel v-model="value" @select-change="handleSelectChange"></tiny-date-panel>
   </div>
 </template>
 

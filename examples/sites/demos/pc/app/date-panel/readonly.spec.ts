@@ -10,5 +10,5 @@ test('[DatePanel] 测试只读', async ({ page }) => {
   await page.getByText('18').click()
   await page.getByLabel('下个月').click()
   await expect(page.getByText('-01-05')).toBeVisible()
-  await expect(page.getByText('5', { exact: true }).first()).toHaveCSS('background-color', '#1476ff')
+  await expect(page.getByText('5', { exact: true }).first()).toHaveCSS('background-color', 'rgb(20, 118, 255)')
 })

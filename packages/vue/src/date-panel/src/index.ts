@@ -26,7 +26,7 @@ export default defineComponent({
       type: Function
     },
     modelValue: {
-      type: Date || String || Number,
+      type: [Date, String, Number],
       default: ''
     },
     format: {

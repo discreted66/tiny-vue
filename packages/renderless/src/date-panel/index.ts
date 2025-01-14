@@ -171,7 +171,7 @@ export const panelEmit =
     state.date = value
     state.value = value
     const formatVal = formatDate(value, props.format, t)
-    emit('select-panel-change', formatVal, ...args)
+    emit('select-change', formatVal, ...args)
     emit('update:modelValue', formatVal, ...args)
   }
 

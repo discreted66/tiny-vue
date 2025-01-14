@@ -87,7 +87,7 @@
             </button>
             <span
               role="button"
-              @click="showYearPicker"
+              @click="showHeaderPicker('Year')"
               data-tag="tiny-date-picker__header-label"
               :class="[gcls('header-label')]"
               >{{ state.yearLabel }}</span
@@ -95,7 +95,7 @@
             <span
               v-show="state.currentView === 'date'"
               role="button"
-              @click="showMonthPicker"
+              @click="showHeaderPicker('Month')"
               data-tag="tiny-date-picker__header-label"
               :class="[gcls('header-label'), { 'text-color-brand': state.currentView === 'month' }]"
               >{{ t(`ui.datepicker.month${state.month + 1}`) }}</span

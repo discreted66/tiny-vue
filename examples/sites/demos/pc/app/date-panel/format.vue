@@ -1,9 +1,9 @@
 <template>
   <div class="demo-date-panel-wrap">
     <div>{{ value }}</div>
-    <div>{{ value1 }}</div>
     <tiny-date-panel v-model="value" format="yyyy-MM-dd"></tiny-date-panel>
-    <tiny-date-panel v-model="value1" format="yyyy\MM\dd"></tiny-date-panel>
+    <div>{{ value1 }}</div>
+    <tiny-date-panel v-model="value1" format="yyyy/MM/dd"></tiny-date-panel>
   </div>
 </template>
 

@@ -305,7 +305,7 @@ export default defineComponent({
       type: Function
     },
     modelValue: {
-      type: Date || String || Number,
+      type: [Date, String, Number],
       default: ''
     },
     format: {
@@ -330,7 +330,7 @@ export default defineComponent({
       default: ''
     }
   },
-  emits: ['pick', 'select-panel-change', 'update:modelValue', 'dodestroy'],
+  emits: ['pick', 'select-change', 'update:modelValue', 'dodestroy'],
   setup(props, context) {
     return setup({
       props,
