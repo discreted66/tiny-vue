@@ -11,6 +11,7 @@ describe('PC Mode', () => {
         modelValue: '2025-01-14'
       }
     })
+
     expect(wrapper.classes()).toContain('tiny-picker-panel')
     expect(wrapper.find('td .current').exists()).toBe(true)
   })
