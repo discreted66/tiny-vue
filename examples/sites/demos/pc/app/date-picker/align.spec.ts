@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test'
 test('[DatePicker] 测试对齐方式', async ({ page }) => {
   page.on('pageerror', (exception) => expect(exception).toBeNull())
   await page.goto('date-picker#align')
+  await page.waitForSelector('.demo-date-picker-wrap', { state: 'visible' })
 
   // 左对齐
   const leftDateInputDom = page.getByRole('textbox').nth(1)

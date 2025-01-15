@@ -33,7 +33,6 @@ export default defineComponent({
       type: String,
       default: ''
     },
-
     readonly: {
       type: Boolean,
       default: false
@@ -43,8 +42,8 @@ export default defineComponent({
       default: () => []
     },
     disabledDate: {
-      type: Boolean,
-      default: false
+      type: Function,
+      default: () => null
     },
     popperClass: {
       type: String,
