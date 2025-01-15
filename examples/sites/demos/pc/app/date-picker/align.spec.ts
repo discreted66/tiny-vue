@@ -8,10 +8,10 @@ test('[DatePicker] 测试对齐方式', async ({ page }) => {
   const leftDateInputDom = page.getByRole('textbox').nth(1)
   const leftDatePanelDom = page.locator('.tiny-picker-panel').nth(2)
   const leftClosePanel = page.getByText('左对齐：')
-  await page.waitForTimeout(200)
+  await page.waitForTimeout(400)
 
   await leftDateInputDom.click()
-  await page.waitForTimeout(200)
+  await page.waitForTimeout(400)
   await expect(leftDatePanelDom).toHaveAttribute('x-placement', /bottom-start|top-start/)
   await leftClosePanel.click()
 
@@ -21,7 +21,7 @@ test('[DatePicker] 测试对齐方式', async ({ page }) => {
   const centerClosePanel = page.getByText('居中对齐：')
 
   await centerDateInputDom.click()
-  await page.waitForTimeout(200)
+  await page.waitForTimeout(400)
   await expect(centerDatePanelDom).toHaveAttribute('x-placement', /bottom|top/)
   await centerClosePanel.click()
 
@@ -31,7 +31,7 @@ test('[DatePicker] 测试对齐方式', async ({ page }) => {
   const rightClosePanel = page.getByText('右对齐：')
 
   await rightDateInputDom.click()
-  await page.waitForTimeout(200)
+  await page.waitForTimeout(400)
   await expect(rightDatePanelDom).toHaveAttribute('x-placement', /bottom-end|top-end/)
   await rightClosePanel.click()
 })
