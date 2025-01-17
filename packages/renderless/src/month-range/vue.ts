@@ -24,7 +24,8 @@ import {
   handleChangeRange,
   handleRangePick,
   handleShortcutClick,
-  doPick
+  doPick,
+  watchModelValue
 } from './index'
 import { nextYear } from '../common/deps/date-util'
 
@@ -37,13 +38,14 @@ export const api = [
   'handleChangeRange',
   'leftPrevYear',
   'leftNextYear',
-  'isValidValue'
+  'isValidValue',
+  'watchModelValue'
 ]
 
-const initState = ({ reactive, computed, api, t }) => {
+const initState = ({ reactive, computed, api, props, t }) => {
   const state = reactive({
     popperClass: '',
-    value: [],
+    value: props.modelValue || [],
     defaultValue: null,
     defaultTime: null,
     minDate: '',
@@ -51,12 +53,12 @@ const initState = ({ reactive, computed, api, t }) => {
     leftDate: new Date(),
     rightDate: nextYear(new Date()),
     rangeState: { endDate: null, selecting: false, row: null, column: null },
-    shortcuts: '',
+    shortcuts: props.shortcuts || [],
     visible: '',
-    disabledDate: '',
-    format: '',
+    disabledDate: props.disabledDate || '',
+    format: props.format || '',
     arrowControl: false,
-    unlinkPanels: false,
+    unlinkPanels: props.unlinkPanels || false,
 
     btnDisabled: computed(
       () => !(state.minDate && state.maxDate && !state.selecting && api.isValidValue([state.minDate, state.maxDate]))
@@ -79,14 +81,15 @@ const initState = ({ reactive, computed, api, t }) => {
 }
 
 export const renderless = (props, { computed, reactive, watch }, { t, emit: $emit }) => {
+  console.info('月份', props)
   const api = {}
   const emit = props.emitter ? props.emitter.emit : $emit
-  const state = initState({ reactive, computed, api, t })
+  const state = initState({ reactive, computed, api, props, t })
 
   Object.assign(api, {
     state,
     resetView: resetView(state),
-    handleChangeRange: handleChangeRange(state),
+    handleChangeRange: handleChangeRange(state, props),
     isValidValue: isValidValue(state),
     leftNextYear: leftNextYear(state),
     leftPrevYear: leftPrevYear(state),
@@ -96,11 +99,13 @@ export const renderless = (props, { computed, reactive, watch }, { t, emit: $emi
     watchValue: watchValue({ state }),
     handleClear: handleClear({ emit, state }),
     watchDefaultValue: watchDefaultValue({ state }),
-    handleConfirm: handleConfirm({ api, emit, state }),
-    handleRangePick: handleRangePick({ api, state, t }),
-    handleShortcutClick: handleShortcutClick(api)
+    handleConfirm: handleConfirm({ api, emit, state, props, t }),
+    handleRangePick: handleRangePick({ api, state, props, t }),
+    handleShortcutClick: handleShortcutClick(state, api, props),
+    watchModelValue: watchModelValue({ state, api })
   })
 
+  watch(() => props.modelValue, api.watchModelValue, { immediate: true })
   watch(() => state.value, api.watchValue)
   watch(() => state.defaultValue, api.watchDefaultValue)
 
