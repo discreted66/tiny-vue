@@ -17,7 +17,7 @@
       <slot name="content">
         <div class="tiny-mobile-exception__content-message">
           <div class="main-message">
-            {{ state.message }}
+            {{ message }}
           </div>
           <div v-if="subMessage" class="sub-message">
             {{ subMessage }}
@@ -38,7 +38,7 @@
 
 <script>
 import { renderless, api } from './renderless/vue'
-import { setup, $prefix, defineComponent } from '../../../vue-common'
+import { setup, $prefix, defineComponent } from '@mobile-root/common'
 import Button from '../../button'
 import { exceptionProps } from './exception'
 import '@opentiny/vue-theme-mobile/exception/index.less'

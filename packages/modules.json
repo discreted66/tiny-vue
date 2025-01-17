@@ -918,8 +918,14 @@
     "type": "component",
     "exclude": false,
     "mode": [
+      "mobile-first",
       "pc"
     ]
+  },
+  "DividerMobileFirst": {
+    "path": "vue/src/divider/src/mobile-first.vue",
+    "type": "template",
+    "exclude": false
   },
   "DividerPc": {
     "path": "vue/src/divider/src/pc.vue",

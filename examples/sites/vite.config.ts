@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import viteDosearchPlugin from './vite-dosearch-plugin'
 import Unocss from 'unocss/vite'
 import path from 'node:path'
 import UnoCssConfig from './uno.config'
@@ -13,6 +14,7 @@ import vue3SvgPlugin from 'vite-svg-loader'
 import { getAlias, pathFromWorkspaceRoot, getOptimizeDeps } from '../../internals/cli/src/config/vite'
 import virtualTemplatePlugin from '@opentiny-internal/unplugin-virtual-template/vite'
 import tailwindCss from 'tailwindcss'
+import { visualizer } from 'rollup-plugin-visualizer'
 import fg from 'fast-glob'
 import fs from 'fs-extra'
 
@@ -42,6 +44,8 @@ export default defineConfig((config) => {
   const env = loadEnv(config.mode, process.cwd() + '/env', '')
   const isSaas = env.VITE_TINY_THEME === 'saas'
   const isPlus = env.VITE_APP_MODE === 'plus'
+  const isInner = env.VITE_BUILD_TARGET === 'inner'
+  const isMobile = env.VITE_APP_MODE === 'mobile'
   const demosPath = isPlus ? '../plusdocs/pc' : `./demos/${env.VITE_APP_MODE}`
   const apisPath = isPlus ? '../plusdocs/apis' : './demos/apis'
   const menuPath = isSaas ? path.resolve('./demos/saas') : path.resolve(demosPath)
@@ -61,6 +65,19 @@ export default defineConfig((config) => {
       dest: '@demos/mobile-first'
     })
   }
+
+  const buildInput = () => {
+    // design-server中一个路由对应一个页面
+    const input = {
+      index: path.resolve(__dirname, './index.html'),
+      playground: path.resolve(__dirname, './playground.html')
+    }
+    if (isMobile) {
+      input.mobile = path.resolve(__dirname, './mobile.html')
+    }
+    return input
+  }
+
   const viteConfig = {
     envDir: './env',
     base: env.VITE_APP_BUILD_BASE_URL || '/tiny-vue/',
@@ -115,21 +132,20 @@ export default defineConfig((config) => {
       viteStaticCopy({
         targets: copyTarget
       }),
-      delStatic()
+      config.mode === 'visualizer' && visualizer({ open: true }),
+      delStatic(),
+      isInner ? viteDosearchPlugin() : null
     ],
     optimizeDeps: getOptimizeDeps(3),
     build: {
       rollupOptions: {
-        input: {
-          index: path.resolve(__dirname, './index.html'),
-          // design-server中添加一个专门路由指向 playground.html
-          playground: path.resolve(__dirname, './playground.html')
-        }
+        input: buildInput()
       }
     },
     resolve: {
       extensions: ['.js', '.ts', '.tsx', '.vue'],
       alias: {
+        '@mobile-root': pathFromWorkspaceRoot('packages/mobile'),
         '@': path.resolve('src'),
         '@demos': path.resolve(`${demosPath}`),
         '@menu': menuPath,

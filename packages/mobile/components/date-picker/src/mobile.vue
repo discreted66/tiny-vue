@@ -19,7 +19,9 @@
       readOnly="true"
       :_mode="_mode"
     >
-      <icon-close slot="suffix" v-if="!state.clearable" @click="clearDisplayValue"></icon-close>
+      <template #suffix>
+        <icon-close v-if="!state.clearable" @click="clearDisplayValue"></icon-close>
+      </template>
     </tiny-input>
     <tiny-mini-picker
       v-model:visible="state.visible"
@@ -33,12 +35,11 @@
 </template>
 
 <script lang="ts">
-import { props, setup, defineComponent } from '../../../vue-common'
+import { props, setup, defineComponent } from '@mobile-root/common'
 import { renderless, api } from './renderless/vue'
 import MiniPicker from '../../mini-picker'
 import Input from '../../input'
 import { iconCloseCircle } from '@opentiny/vue-icon'
-import '@opentiny/vue-theme/date-picker/index.less'
 
 export default defineComponent({
   components: {
