@@ -176,6 +176,9 @@ export const handleMouseMove =
 export const handleMonthTableClick =
   ({ api, emit, props }) =>
   (event) => {
+    if (props.readonly) {
+      return
+    }
     const target = getTarget(event)
 
     if (!target) {
