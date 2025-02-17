@@ -20,7 +20,7 @@
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "prettier.enable": true,
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
