@@ -33,6 +33,10 @@
     .tiny-svg {
       font-size: var(--tv-Picker-icon-size);
       fill: var(--tv-Picker-icon-color);
+
+      &:hover {
+        fill: var(--tv-Picker-icon-color-hover);
+      }
     }
 
     &.@{input-prefix-cls},
@@ -47,6 +51,7 @@
     }
 
     &.show-auto-width {
+
       &.@{input-prefix-cls},
       &.@{input-prefix-cls}__inner {
         width: 100%;
@@ -70,8 +75,8 @@
       right: 0;
 
       .baseClearicon {
-        position: absolute;
-        background-color: #ffffff;
+        // position: absolute;
+        background-color: inherit;
 
         &:hover {
           fill: var(--tv-Picker-icon-color-hover);
@@ -99,6 +104,7 @@
       outline: 0;
       padding: 0;
       width: 39%;
+      background: inherit;
       color: var(--tv-Picker-text-color);
       .text-overflow();
       .placeholder();
@@ -121,15 +127,15 @@
         width: var(--tv-Picker-icon-size);
         height: var(--tv-Picker-icon-size);
         cursor: pointer;
-        fill: var(--tv-Picker-icon-color);
+        // fill: var(--tv-Picker-icon-color);
 
         &:hover {
-          fill: var(--tv-Picker-icon-color-hover);
+          // fill: var(--tv-Picker-icon-color-hover);
         }
       }
     }
 
-    .@{range-prefix-cls}__close-icon:has(> svg) + .@{range-prefix-cls}__icon {
+    .@{range-prefix-cls}__close-icon:has(> svg)+.@{range-prefix-cls}__icon {
       display: none;
     }
   }
@@ -228,11 +234,11 @@
   position: relative;
   border-width: 0;
 
-  & > *:not(.@{range-editor-prefix-cls}-display-only) {
+  &>*:not(.@{range-editor-prefix-cls}-display-only) {
     visibility: hidden;
   }
 
-  & > .@{range-editor-prefix-cls}-display-only {
+  &>.@{range-editor-prefix-cls}-display-only {
     position: absolute;
     top: 50%;
     left: 0;
@@ -250,9 +256,9 @@
   overflow: hidden;
   position: relative;
 
-  &:active > &__bar,
-  &:focus > &__bar,
-  &:hover > &__bar {
+  &:active>&__bar,
+  &:focus>&__bar,
+  &:hover>&__bar {
     opacity: 1;
     transition: opacity 340ms ease-out;
   }
@@ -295,7 +301,7 @@
       width: 6px;
       top: 2px;
 
-      & > div {
+      &>div {
         width: 100%;
       }
     }
@@ -304,7 +310,7 @@
       height: 6px;
       left: 2px;
 
-      & > div {
+      &>div {
         height: 100%;
       }
     }

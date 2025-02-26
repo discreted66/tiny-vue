@@ -68,26 +68,28 @@ export const flagOperate =
 export const getMileIcon =
   ({ constants, props }: Pick<IMilestoneRenderlessParams, 'constants' | 'props'>) =>
   (node: IMilestoneNode): IMilestoneIconStyle => {
+    const isDark = localStorage.getItem('vueuse-color-scheme') === 'dark'
+    console.info(localStorage.getItem('vueuse-color-scheme'), isDark)
     const smbConstants = {
       STATUS_COLOR_MAP: {
         DEFAULT: {
-          BORDER_COLOR: '#C2C2C2',
-          BACKGROUND_COLOR: '#FFFFFF',
-          COLOR: '#191919',
+          BORDER_COLOR: isDark ? '#191919' : '#C2C2C2',
+          BACKGROUND_COLOR: isDark ? '#191919' : '#FFFFFF',
+          COLOR: isDark ? '#E6E6E6' : '#191919',
           BOX_SHADOW_PX: '0px 0px 0px 4px',
           FLAG_CONTENT_CLS: '.content'
         },
         COMPLETED: {
-          BORDER_COLOR: '#191919',
-          BACKGROUND_COLOR: '#FFFFFF',
-          COLOR: '#191919',
+          BORDER_COLOR: isDark ? '#808080' : '#191919',
+          BACKGROUND_COLOR: isDark ? '#000' : '#FFFFFF',
+          COLOR: isDark ? '#E6E6E6' : '#191919',
           BOX_SHADOW_PX: '0px 0px 0px 4px',
           FLAG_CONTENT_CLS: '.content'
         },
         DOING: {
-          BORDER_COLOR: '#191919',
-          BACKGROUND_COLOR: '#191919',
-          COLOR: '#FFFFFF',
+          BORDER_COLOR: isDark ? '#E6E6E6' : '#191919',
+          BACKGROUND_COLOR: isDark ? '#E6E6E6' : '#191919',
+          COLOR: isDark ? '#191919' : '#FFFFFF',
           BOX_SHADOW_PX: '0px 0px 0px 4px',
           FLAG_CONTENT_CLS: '.content'
         }

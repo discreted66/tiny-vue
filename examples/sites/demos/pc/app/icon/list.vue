@@ -9,13 +9,10 @@
           {{ groupName }}
         </div>
         <template v-for="name in nameList" :key="name">
-          <div
-            :class="{
-              'svg-visible': searchName === '' || name.toLowerCase().includes(searchName.toLowerCase()),
-              'svgs-item': true
-            }"
-            @click="click(name)"
-          >
+          <div :class="{
+            'svg-visible': searchName === '' || name.toLowerCase().includes(searchName.toLowerCase()),
+            'svgs-item': true
+          }" @click="click(name)">
             <component :is="Svgs[name] && Svgs[name]()" class="svgs-icon"></component>
             <span class="svgs-text">{{ name }}</span>
           </div>
@@ -99,7 +96,6 @@ export default {
 .svgs-icon {
   cursor: pointer;
   transition: all 0.4s;
-  fill: #000;
   font-size: 24px;
 }
 
@@ -116,6 +112,11 @@ export default {
 
 .svgs-item:hover {
   background-color: #f6f8fa;
+  color: #191919;
+}
+
+.svgs-item:hover .svgs-icon {
+  fill: #191919;
 }
 
 .svgs-text {

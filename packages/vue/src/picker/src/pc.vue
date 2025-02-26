@@ -50,17 +50,15 @@
       </template>
       <template #suffix>
         <i class="tiny-input__icon-container">
-          <transition name="tiny-transition-icon-scale-in">
-            <component
-              :is="state.showClose ? clearIcon : null"
-              @click="handleClickIcon"
-              @mouseenter="state.showClose = true"
-              @mouseleave="state.showClose = false"
-              v-if="state.haveTrigger"
-              class="baseClearicon"
-            />
-          </transition>
-          <component :is="state.triggerClass" @click="handleFocus" class="tiny-svg-size" />
+          <component
+            :is="state.showClose ? clearIcon : null"
+            @click="handleClickIcon"
+            @mouseenter="state.showClose = true"
+            @mouseleave="state.showClose = false"
+            class="tiny-svg-size baseClearicon"
+            v-if="state.haveTrigger"
+          />
+          <component v-show="!state.showClose" :is="state.triggerClass" @click="handleFocus" class="tiny-svg-size" />
         </i>
       </template>
     </tiny-input>
