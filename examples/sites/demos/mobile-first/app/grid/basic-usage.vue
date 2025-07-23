@@ -1,285 +1,150 @@
 <template>
   <div>
-    <div class="mb-3">
-      <tiny-radio v-model="viewType" label="mf">表格视图</tiny-radio>
-      <tiny-radio v-model="viewType" label="card">卡片视图</tiny-radio>
-      <tiny-radio v-model="viewType" label="list">列表视图</tiny-radio>
-      <tiny-radio v-model="viewType" label="gantt">甘特视图</tiny-radio>
-      <tiny-radio v-model="viewType" label="custom">custom视图</tiny-radio>
-    </div>
-    <tiny-grid
-      highlight-current-row
-      :fetch-data="fetchData"
-      seq-serial
-      :pager="pagerConfig"
-      auto-resize
-      :select-config="selectConfig"
-      :view-type="viewType"
-      :mf-show="mfShow"
-      :card-config="cardConfig"
-      @card-click="onCardClick"
-      height="480"
-      show-overflow
-    >
-      <template #link>
-        <icon-chevron-right class="mf-table-more cursor-pointer fill-color-brand"></icon-chevron-right>
+    <tiny-button @click="showTableDialog = true">打开表格弹窗</tiny-button>
+    <!-- 弹窗A：表格弹窗 -->
+    <tiny-dialog-box :visible="showTableDialog" @update:visible="showTableDialog = $event" title="公司列表" width="90%">
+      <tiny-grid :data="tableData" @filter-change="filterChangeEvent">
+        <tiny-grid-column type="index" width="60"></tiny-grid-column>
+        <tiny-grid-column type="selection" width="60"></tiny-grid-column>
+        <tiny-grid-column field="name" title="公司名称" :filter="nameFilter">
+          <template #default="{ row }">
+            <span style="color: #409eff; cursor: pointer" @click="showDetail(row)">
+              {{ row.name }}
+            </span>
+            <tiny-dialog-box
+              :visible="dialogVisible"
+              @update:visible="dialogVisible = $event"
+              :append-to-body="false"
+              title="公司详情"
+              width="500px"
+            >
+              <div v-if="currentRow">
+                <p><b>公司名称：</b>{{ currentRow.name }}</p>
+                <p><b>城市：</b>{{ currentRow.city }}</p>
+                <p><b>员工数：</b>{{ currentRow.employees }}</p>
+                <p><b>创建日期：</b>{{ currentRow.createdDate }}</p>
+              </div>
+              <template #footer>
+                <tiny-button hue="primary" @click="dialogVisible = false">确定</tiny-button>
+              </template>
+            </tiny-dialog-box>
+          </template>
+        </tiny-grid-column>
+        <tiny-grid-column field="employees" title="员工数"></tiny-grid-column>
+        <tiny-grid-column field="createdDate" title="创建日期"></tiny-grid-column>
+        <tiny-grid-column field="city" title="城市"></tiny-grid-column>
+      </tiny-grid>
+      <template #footer>
+        <tiny-button hue="primary" @click="showTableDialog = false">关闭</tiny-button>
       </template>
-      <tiny-grid-column type="selection" width="60"></tiny-grid-column>
-      <tiny-grid-column
-        type="operation"
-        title="操作"
-        :operation-config="operationConfig"
-        width="120"
-      ></tiny-grid-column>
-      <tiny-grid-column field="name" title="名称"></tiny-grid-column>
-      <tiny-grid-column field="area" title="所属区域"></tiny-grid-column>
-      <tiny-grid-column field="address" title="地址"></tiny-grid-column>
-      <tiny-grid-column field="introduction" title="公司简介" show-overflow></tiny-grid-column>
-      <template #list="{ rows }">
-        <div>
-          <tiny-column-list-item
-            v-for="(row, index) in rows"
-            :data="row"
-            :key="index"
-            :image="row.logo"
-            :flex-grow="[0, 0]"
-            :flex-basis="['50%', '50%']"
-            operate-flex-basis="80px"
-            :options="listOptions"
-            class="mb-3"
-          >
-            <template #column1>
-              <ul class="[&_li]:mb-1.5">
-                <li class="text-sm line-clamp-1">名称：{{ row.name }}</li>
-                <li class="text-color-text-secondary line-clamp-1">所属区域：{{ row.area }}</li>
-                <li class="text-color-text-secondary">地址：{{ row.address }}</li>
-              </ul>
-            </template>
-            <template #column2>
-              <ul class="[&_li]:mb-1.5">
-                <li>
-                  <tiny-tag v-if="row.tag1" size="mini">{{ row.tag1 }}</tiny-tag>
-                  <tiny-tag v-if="row.tag2" size="mini">{{ row.tag2 }}</tiny-tag>
-                  <tiny-tag v-if="row.tag3" size="mini">{{ row.tag3 }}</tiny-tag>
-                </li>
-                <li class="text-color-text-secondary line-clamp-1">公司简介：{{ row.introduction }}</li>
-              </ul>
-            </template>
-          </tiny-column-list-item>
-        </div>
-      </template>
-      <template #gantt="{ rows }">
-        <div class="gantt-container">gantt视图，表格行数{{ rows.length }}</div>
-      </template>
-      <template #custom="{ rows }">
-        <div class="custom-container">custom视图，表格行数{{ rows.length }}</div>
-      </template>
-    </tiny-grid>
+    </tiny-dialog-box>
+
+    <!-- 弹窗B：详情弹窗 -->
   </div>
 </template>
 
 <script>
-import { TinyGrid, TinyGridColumn, TinyModal, TinyTag, TinyRadio, TinyColumnListItem, TinyPager } from '@opentiny/vue'
-import {
-  IconChevronRight,
-  IconAreaChart,
-  IconBarChart,
-  IconDotChart,
-  IconLineChart,
-  IconPieChart
-} from '@opentiny/vue-icon'
+import { TinyGrid, TinyGridColumn, TinyModal, TinyInput, TinyDialogBox, TinyButton } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyTag,
     TinyGrid,
     TinyGridColumn,
-    TinyRadio,
-    TinyColumnListItem,
-    IconChevronRight: IconChevronRight()
-  },
-  methods: {
-    clickHandler(e, { row, buttonConfig }) {
-      TinyModal.message(`点击按钮 - ${row.name} - ${buttonConfig.name}`)
-    },
-    onCardClick(row, e) {
-      TinyModal.message('onCardClick')
-    },
-    getData({ page }) {
-      let curPage = page.currentPage
-      let pageSize = page.pageSize
-      let offset = (curPage - 1) * pageSize
-
-      return new Promise((resolve) => {
-        resolve({
-          result: this.tableData.slice(offset, offset + pageSize),
-          page: { total: this.tableData.length }
-        })
-      })
-    }
-  },
-  computed: {
-    listOptions() {
-      return this.operationConfig.buttons.map((item) => {
-        return {
-          text: item.name,
-          icon: item.icon,
-          disabled: item.disabled,
-          hidden: item.hidden
-        }
-      })
-    }
+    TinyDialogBox,
+    TinyButton
   },
   data() {
     return {
-      viewType: 'list',
-      mfShow: 'card', // 可选值为list, card
-      selectConfig: {
-        checkMethod({ rowIndex }) {
-          return rowIndex !== 5
-        }
-      },
-      pagerConfig: {
-        component: TinyPager,
-        attrs: {
-          currentPage: 1,
-          pageSize: 5,
-          pageSizes: [5, 10],
-          total: 0,
-          layout: 'total, sizes, prev, pager, next, jumper'
-        }
-      },
-      fetchData: {
-        api: this.getData
-      },
-      cardConfig: {
-        cardSize: 'small',
-        primaryField: 'name',
-        contentFields: ['area', 'address', 'introduction'],
-        logoField: [
-          'logo',
-          { render: ({ h, row, field, value, config }) => h('img', { class: 'w-full h-full', attrs: { src: value } }) }
-        ],
-        tagFields: [
-          'tag1',
-          'tag2',
-          [
-            'tag3',
-            {
-              render: ({ h, row, field, value, config, color }) =>
-                h(
-                  TinyTag,
-                  {
-                    props: { size: 'mini', type: color, customClass: 'inline-block truncate max-w-[6.25rem] h-[18px]' }
-                  },
-                  value
-                )
-            }
-          ]
-        ],
-
-        tagColorFields: ['tagColor1', 'tagColor2', 'tagColor3']
-      },
-      operationConfig: {
-        buttons: [
-          {
-            name: '操作',
-            icon: IconAreaChart(),
-            click: this.clickHandler,
-            disabled: true
-          },
-          { name: '操作2', icon: IconBarChart(), click: this.clickHandler, disabled: (row) => row.id === '1' },
-          { name: '操作3', icon: IconDotChart(), click: this.clickHandler, hidden: true },
-          { name: '操作4', icon: IconLineChart(), click: this.clickHandler, hidden: (row) => row.id === '2' },
-          { name: '操作5', icon: IconPieChart(), click: this.clickHandler }
-        ]
-      },
+      showTableDialog: false, // 控制表格弹窗A
+      dialogVisible: false, // 控制详情弹窗B
+      currentRow: null,
       tableData: [
         {
           id: '1',
-          name: 'GFD科技有限公司GFD科技有限公司GFD科技有限公司GFD科技有限公司GFD科技有限公司GFD科技有限公司GFD科技有限公司GFD科技有限公司GFD科技有限公司GFD科技有限公司',
-          area: '华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区华东区',
-          address: '福州',
-          introduction: '公司技术和研发实力雄厚，是国家863项目的参与者，并被政府认定为“高新技术企业”。',
-          logo: `${import.meta.env.VITE_APP_BUILD_BASE_URL}static/images/9.jpg`,
-          tag1: 'NA',
-          tag2: '交通',
-          tag3: '总集',
-          tagColor1: '',
-          tagColor2: '',
-          tagColor3: ''
+          name: 'GFD 科技 YX 公司',
+          city: '福州',
+          employees: 800,
+          createdDate: '2014-04-30 00:56:00'
         },
         {
           id: '2',
-          name: 'WWWW科技有限公司',
-          area: '华南区',
-          address: '深圳福田区',
-          introduction: '公司技术和研发实力雄厚，是国家863项目的参与者，并被政府认定为“高新技术企业”。',
-          logo: `${import.meta.env.VITE_APP_BUILD_BASE_URL}static/images/9.jpg`,
-          tag1: 'NA',
-          tag2: '交通',
-          tag3: '总集',
-          tagColor1: '',
-          tagColor2: '',
-          tagColor3: ''
+          name: 'WWW 科技 YX 公司',
+          city: '深圳',
+          employees: 300,
+          createdDate: '2016-07-08 12:36:22'
         },
         {
           id: '3',
-          name: 'RFV有限责任公司',
-          area: '华南区',
-          address: '中山市',
-          introduction: '公司技术和研发实力雄厚，是国家863项目的参与者，并被政府认定为“高新技术企业”。',
-          logo: `${import.meta.env.VITE_APP_BUILD_BASE_URL}static/images/9.jpg`,
-          tag1: 'NA',
-          tag2: '交通',
-          tag3: '总集',
-          tagColor1: '',
-          tagColor2: '',
-          tagColor3: ''
+          name: 'RFV 有限责任公司',
+          city: '中山',
+          employees: 1300,
+          createdDate: '2014-02-14 14:14:14'
         },
         {
           id: '4',
-          name: 'TGB有限公司',
-          area: '华北区',
-          address: '梅州',
-          introduction: '公司技术和研发实力雄厚，是国家863项目的参与者，并被政府认定为“高新技术企业”。',
-          logo: `${import.meta.env.VITE_APP_BUILD_BASE_URL}static/images/9.jpg`,
-          tag1: 'NA',
-          tag2: '交通',
-          tag3: '总集',
-          tagColor1: '',
-          tagColor2: '',
-          tagColor3: ''
+          name: 'TGB 科技 YX 公司',
+          city: '龙岩',
+          employees: 360,
+          createdDate: '2013-01-13 13:13:13'
         },
         {
           id: '5',
-          name: 'YHN科技有限公司',
-          area: '华南区',
-          address: '韶关',
-          introduction: '公司技术和研发实力雄厚，是国家863项目的参与者，并被政府认定为“高新技术企业”。',
-          logo: `${import.meta.env.VITE_APP_BUILD_BASE_URL}static/images/9.jpg`,
-          tag1: 'NA',
-          tag2: '交通',
-          tag3: '总集',
-          tagColor1: '',
-          tagColor2: '',
-          tagColor3: ''
+          name: 'YHN 科技 YX 公司',
+          city: '韶关',
+          employees: 810,
+          createdDate: '2012-12-12 12:12:12'
         },
         {
           id: '6',
-          name: '康康物业有限公司',
-          area: '华北区',
-          address: '广州天河区',
-          introduction: '公司技术和研发实力雄厚，是国家863项目的参与者，并被政府认定为“高新技术企业”。',
-          logo: `${import.meta.env.VITE_APP_BUILD_BASE_URL}static/images/9.jpg`,
-          tag1: 'NA',
-          tag2: '如果内容超过100px',
-          tag3: '总集',
-          tagColor1: '',
-          tagColor2: '',
-          tagColor3: ''
+          name: 'WSX 科技 YX 公司',
+          city: '黄冈',
+          employees: 800,
+          createdDate: '2011-11-11 11:11:11'
+        },
+        {
+          id: '7',
+          name: 'KBG 物业 YX 公司',
+          city: '赤壁',
+          employees: 400,
+          createdDate: '2016-04-30 23:56:00'
+        },
+        {
+          id: '8',
+          name: '深圳市福德宝网络技术 YX 公司',
+          city: '厦门',
+          employees: 540,
+          createdDate: '2016-06-03 13:53:25'
+        },
+        {
+          id: '9',
+          name: 'xxx 络技术 YX 公司',
+          city: '深圳',
+          employees: 540,
+          createdDate: '2016-06-03 13:53:25'
         }
-      ]
+      ],
+      nameFilter: {
+        layout: 'simple',
+        multi: true,
+        hasFilter: true, // 设置该列为已选列
+        condition: {
+          value: ['GFD 科技 YX 公司'] // 设置默认选中项
+        },
+        simpleFilter: {
+          searchConfig: {
+            component: TinyInput
+          }
+        }
+      }
+    }
+  },
+  methods: {
+    filterChangeEvent({ filters }) {
+      TinyModal.message({ message: `${JSON.stringify(filters)}`, status: 'info' })
+    },
+    showDetail(row) {
+      this.currentRow = row
+      this.dialogVisible = true
     }
   }
 }

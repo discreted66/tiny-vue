@@ -1,5 +1,6 @@
 <template>
   <div class="demo-input">
+    222
     <tiny-input type="textarea" v-model="input" placeholder="default"></tiny-input>
     <tiny-input type="textarea" v-model="input" :rows="1" placeholder="rows = 1"></tiny-input>
     <tiny-input type="textarea" v-model="input" :cols="100" placeholder="cols = 100"></tiny-input>

@@ -11,6 +11,7 @@
       type="datetimerange"
       start-placeholder="开始日期"
       end-placeholder="结束日期"
+      @change="aa"
     ></tiny-date-picker>
     <tiny-date-picker
       v-model="monthValue"
@@ -40,6 +41,11 @@ export default {
       dateTimeValue: '',
       monthValue: '',
       yearValue: ''
+    }
+  },
+  methods: {
+    aa(val) {
+      console.info(val)
     }
   }
 }

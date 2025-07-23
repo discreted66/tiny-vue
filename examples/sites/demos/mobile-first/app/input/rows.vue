@@ -1,9 +1,16 @@
 <template>
   <div class="demo-input">
-    <tiny-input type="textarea" v-model="input" placeholder="rows 为默认"></tiny-input>
+    <tiny-input type="textarea" v-model="input" :rows="3" placeholder="rows 为默认"></tiny-input>
     <br />
     <br />
-    <tiny-input type="textarea" v-model="input" :rows="1" placeholder="rows 为 1"></tiny-input>
+    <tiny-input
+      type="textarea"
+      v-model="input"
+      :rows="1"
+      placeholder="rows 为 1"
+      :maxlength="100"
+      show-word-limit
+    ></tiny-input>
   </div>
 </template>
 
@@ -16,7 +23,7 @@ export default {
   },
   data() {
     return {
-      input: ''
+      input: '2222'
     }
   }
 }

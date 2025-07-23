@@ -5,10 +5,14 @@
       :model="createData"
       :rules="rules"
       :validate-on-rule-change="isvalidate"
-      label-width="80px"
+      label-width="140px"
       @validate="validate"
     >
-      <tiny-form-item label="用户名" prop="username" tip-content="请输入用户名">
+      <tiny-form-item
+        label="用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名用户名"
+        prop="username"
+        tip-content="请输入用户名"
+      >
         <tiny-input v-model="createData.username"></tiny-input>
       </tiny-form-item>
       <tiny-form-item label="密码" prop="password" tip-content="请输入密码">
