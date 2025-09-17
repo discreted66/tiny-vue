@@ -10,8 +10,19 @@ export default {
     TinyCalendarView
   },
   data() {
+    let aa = []
+    for (let i = 0; i < 50; i++) {
+      aa.push({
+        title: '前端周会' + i,
+        start: '2023-05-15 8:30:00',
+        end: '2023-05-15 9:00:00',
+        content: '日程备注日程备注日程备注日程备注日程备注日程备注日程备注日程备注日程备注日程备注',
+        theme: 'blue'
+      })
+    }
     return {
       eventslist: [
+        ...aa,
         {
           title: '前端周会 1',
           start: '2023-05-15 8:30:00',
