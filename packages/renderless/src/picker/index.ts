@@ -10,7 +10,7 @@
  *
  */
 
-import { toDate1, getDateWithNewTimezone, getStrTimezone, getLocalTimezone } from '@opentiny/utils'
+import { toDate1, getDateWithNewTimezone, getStrTimezone, getLocalTimezone, toDateStr } from '@opentiny/utils'
 import { isNumber, isDate } from '@opentiny/utils'
 import { userPopper } from '@opentiny/vue-hooks'
 import { DATEPICKER } from '@opentiny/utils'
@@ -138,10 +138,46 @@ export const formatAsFormatAndType =
   }
 
 export const displayValue =
-  ({ api, props, state }) =>
+  ({ api, props, state, utils }) =>
   () => {
     const formatObj = {
       rangeSeparator: props.rangeSeparator
+    }
+
+    // 当 isServiceTimezone 为 true 时，使用 toDateStr 按系统时区格式化，避免本地时区影响
+    // parsedValue 已经是系统时区的时间，但 formatDate 会按本地时区格式化
+    // 所以我们需要将 parsedValue 的 Date 对象当作 UTC 时间，然后转换到系统时区格式化
+    if (state.timezone.isServiceTimezone && state.parsedValue) {
+      const { to } = state.timezone
+      const format = state.format || DATEPICKER.DateFormats[state.type]
+
+      if (Array.isArray(state.parsedValue)) {
+        const formatted = state.parsedValue.map((date) => {
+          if (!date) return ''
+          // parsedValue 已经是系统时区的时间，需要将其当作 UTC 时间，然后转换到系统时区格式化
+          // 先将系统时区的时间转换回 UTC，然后再转换到系统时区格式化
+          const utcDate = getDateWithNewTimezone(date, to, 0)
+          return utcDate ? toDateStr(utcDate, format, to) : ''
+        })
+        if (Array.isArray(state.userInput)) {
+          return [
+            state.userInput[0] || (formatted && formatted[0]) || '',
+            state.userInput[1] || (formatted && formatted[1]) || ''
+          ]
+        }
+        return formatted
+      } else {
+        // parsedValue 已经是系统时区的时间，需要将其当作 UTC 时间，然后转换到系统时区格式化
+        const utcDate = getDateWithNewTimezone(state.parsedValue, to, 0)
+        if (!utcDate) {
+          return ''
+        }
+        const formatted = toDateStr(utcDate, format, to)
+        if (state.userInput !== null) {
+          return state.userInput
+        }
+        return formatted
+      }
     }
 
     const formattedValue = api.formatAsFormatAndType(state.parsedValue, state.format, state.type, formatObj)
@@ -244,9 +280,20 @@ export const getTimezone =
       serveTimezone = getStrTimezone(str)
     }
 
+    // 当 isServiceTimezone 为 true 时，to 应该使用系统时区（Timezone），而不是本地时区
+    // 这样可以排除本地电脑客户端时区改变的影响
+    let targetTimezone
+    if (setting) {
+      // 有服务端时区设置时，优先使用系统时区（Timezone）
+      targetTimezone = isutc8 ? 8 : isTzNumber(timezone) ? timezone : isTzNumber(Timezone) ? Timezone : 8
+    } else {
+      // 没有服务端时区设置时，使用原有逻辑（可以回退到本地时区）
+      targetTimezone = isutc8 ? 8 : clientTimezone
+    }
+
     return {
       from: serveTimezone,
-      to: isutc8 ? 8 : clientTimezone,
+      to: targetTimezone,
       isServiceTimezone: !!setting,
       timezoneOffset: clientTimezoneOffset
     }

@@ -219,7 +219,7 @@ const initApi = ({ api, props, hooks, state, vnode, others, utils, parent, isPCM
     formatAsFormatAndType: formatAsFormatAndType({ api }),
     parseString: parseString({ api, state }),
     handleClose: handleClose({ api, props, state }),
-    displayValue: displayValue({ api, props, state }),
+    displayValue: displayValue({ api, props, state, utils }),
     handlePick: handlePick({ api, state }),
     watchPickerVisible: watchPickerVisible({ api, vm, dispatch, emit, props, state, nextTick, isPCMode }),
     watchMobileVisible: watchMobileVisible({ api, props, state, nextTick }),
