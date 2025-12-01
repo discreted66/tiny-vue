@@ -23,10 +23,7 @@
           <div v-html="state.currDemo?.desc['zh-CN']"></div>
         </div>
         <!-- 预览 -->
-        <div
-          :id="state.currDemo?.demoId"
-          class="rel px20 minh200"
-        >
+        <div :id="state.currDemo?.demoId" class="rel px20 minh200">
           <config-provider :design="design">
             <component :is="state.comp"></component>
           </config-provider>
@@ -124,6 +121,7 @@ export default {
   setup() {
     import('./tailwind.css')
     const { state: modeState, fn: modeFn } = useModeCtx()
+    console.log('modeState', modeState)
     const state = hooks.reactive({
       demos: [], // 组件的所有示例
       currDemo: null, // 选中的demo
@@ -142,6 +140,7 @@ export default {
       clickMenu: async (menu) => {
         if (menu.nameCn && menu.key !== state.key) {
           modeState.pathName = menu.key
+          console.log('modeState.pathName', modeState.pathName)
           await _switchPath()
         }
       },
@@ -164,11 +163,16 @@ export default {
 
     // 以下私有方法，无须传递给vue模板的。
     async function _switchPath() {
+      console.log('demos', demos)
       const demosModule =
         demos[`../../sites/demos/mobile-first/app/${modeState.pathName}/webdoc/${modeState.pathName}.js`]
+      console.log('demosModule', demosModule)
       const demosConfig = await getDemosConfig(demosModule)
+      console.log('demosConfig', demosConfig)
       state.demos = demosConfig.demos
+      console.log('state.demos', state.demos)
       state.currDemo = state.demos.find((d) => d.demoId === modeState.demoId) || state.demos?.[0]
+      console.log('state.currDemo', state.currDemo)
       state.currApi = (await getApisConfig(modeState.pathName, 'mobile-first')).apis
       await _switchDemo()
     }
