@@ -1,67 +1,23 @@
-<template>
-  <tiny-base-select
-    ref="baseSelectRef"
-    data-tag="tiny-grid-select"
-    class="w-full overflow-hidden"
-    v-model="state.modelValue"
-    :clearable="clearable"
-    :multiple="multiple"
-    :filterable="filterable"
-    :filter-method="filter"
-    :text-field="textField"
-    :value-field="valueField"
-    :size="size"
-    :disabled="disabled"
-    :placeholder="placeholder"
-    :readonly="readonly"
-    :popper-class="popperClass"
-    :popper-append-to-body="popperAppendToBody"
-    :placement="placement"
-    :drop-style="dropStyle"
-    :hover-expand="hoverExpand"
-    :click-expand="clickExpand"
-    :collapse-tags="collapseTags"
-    :copyable="copyable"
-    :text-split="textSplit"
-    :show-tips="showTips"
-    :searchable="searchable"
-    :multiple-limit="multipleLimit"
-    @visible-change="handleVisibleChange"
-  >
-    <template #panel>
-      <tiny-grid
-        ref="gridRef"
-        auto-resize
-        :row-id="valueField"
-        :select-config="buildSelectConfig()"
-        :radio-config="buildRadioConfig()"
-        :highlight-current-row="true"
-        :columns="gridOp?.columns || []"
-        :data="Array.isArray(state.gridData) ? state.gridData : state.gridData?.data || state.gridData || []"
-        @select-all="selectChange"
-        @select-change="selectChange"
-        @radio-change="radioChange"
-        @mousedown.stop
-        v-bind="gridOp"
-      ></tiny-grid>
-    </template>
-  </tiny-base-select>
-</template>
+/**
+ * Copyright (c) 2022 - present TinyVue Authors.
+ * Copyright (c) 2022 - present Huawei Cloud Computing Technologies Co., Ltd.
+ *
+ * Use of this source code is governed by an MIT-style license.
+ *
+ * THE OPEN SOURCE SOFTWARE IN THIS PRODUCT IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL,
+ * BUT WITHOUT ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR
+ * A PARTICULAR PURPOSE. SEE THE APPLICABLE LICENSES FOR MORE DETAILS.
+ *
+ */
 
-<script lang="ts">
-import { props, $prefix, defineComponent, setup } from '@opentiny/vue-common'
-import { renderless, api } from '@opentiny/vue-renderless/grid-select/vue'
-import Grid from '@opentiny/vue-grid'
-import BaseSelect from '@opentiny/vue-base-select'
+import { $props, $prefix, $setup, defineComponent } from '@opentiny/vue-common'
+import template from 'virtual-template?pc|mobile-first'
 
 export default defineComponent({
   name: $prefix + 'GridSelect',
-  components: {
-    TinyGrid: Grid,
-    TinyBaseSelect: BaseSelect
-  },
+  componentName: 'GridSelect',
   props: {
-    ...props,
+    ...$props,
     // 基础 props
     clearable: Boolean,
     disabled: Boolean,
@@ -161,7 +117,6 @@ export default defineComponent({
     }
   },
   setup(props, context) {
-    return setup({ props, context, renderless, api })
+    return $setup({ props, context, template })
   }
 })
-</script>

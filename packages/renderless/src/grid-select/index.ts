@@ -1,14 +1,20 @@
 import { find } from '@opentiny/utils'
 
 const updateBaseSelect = ({ vm, props, data, label }: any) => {
-  if (!vm.$refs.baseSelectRef) {
+  const baseSelect = vm.$refs.baseSelectRef
+
+  if (!baseSelect) {
     return
   }
 
-  vm.$refs.baseSelectRef.updateSelectedData(data)
+  if (typeof baseSelect.updateSelectedData === 'function') {
+    baseSelect.updateSelectedData(data)
+  } else if (baseSelect.state) {
+    baseSelect.state.selected = data
+  }
 
   if (!props.multiple) {
-    const baseState = vm.$refs.baseSelectRef.state
+    const baseState = baseSelect.state
     if (!baseState) {
       return
     }
@@ -523,7 +529,14 @@ export const radioChange =
       state.selected = row
       state.currentKey = row[props.valueField]
 
-      vm.$refs.baseSelectRef.hidePanel()
+      const baseSelect = vm.$refs.baseSelectRef
+      const methods = baseSelect?.methods || baseSelect
+
+      if (methods && typeof methods.hidePanel === 'function') {
+        methods.hidePanel()
+      } else if (baseSelect?.state) {
+        baseSelect.state.visible = false
+      }
 
       emit('update:modelValue', row[props.valueField])
       emit('change', row[props.valueField])

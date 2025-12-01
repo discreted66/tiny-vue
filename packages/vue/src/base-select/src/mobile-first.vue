@@ -286,9 +286,10 @@
             @click="handleClearClick"
             @mouseenter="state.inputHovering = true"
           ></icon-close>
+          <!-- tiny 新增： 必须使用 state.getIcon.icon -->
           <component
             v-show="!(remote && filterable && !remoteConfig.showIcon)"
-            :is="dropdownIcon"
+            :is="state.getIcon.icon"
             :class="
               m(
                 gcls('caret'),
@@ -341,29 +342,15 @@
             ></tiny-input>
           </div>
 
-          <tiny-tree
-            v-if="renderType === 'tree'"
-            class="[&_[data-tag=tiny-checkbox]_>span_>span]:p-1.5 sm:[&_[data-tag=tiny-checkbox]_>span_>span]:p-0"
-            :filter-node-method="filterMethod"
-            :props="{ label: textField, isLeaf: 'isLeaf', ...treeOp.props }"
-            :expand-on-click-node="false"
-            :icon-trigger-click-node="false"
-            :node-key="valueField"
-            :default-expand-all="state.isExpandAll"
-            :check-strictly="treeOp.checkStrictly"
-            :default-checked-keys="multiple ? state.defaultCheckedKeys : []"
-            ref="selectTree"
-            :current-node-key="!multiple ? state.currentKey : ''"
-            :show-checkbox="multiple"
-            @load-data="loadTreeData"
-            @node-collapse="nodeCollapse"
-            @node-expand="nodeExpand"
-            @check="nodeCheckClick"
-            @node-click="treeNodeClick"
-            :show-checked-mark="state.device === 'mb'"
-            v-bind="treeOp"
-          ></tiny-tree>
-          <template v-if="optimization && renderType !== 'tree'">
+          <slot
+            name="panel"
+            :methods="{
+              updateSelectedData,
+              hidePanel
+            }"
+          ></slot>
+
+          <template v-if="optimization">
             <div :style="{ height: `${state.optimizeStore.recycleScrollerHeight}px` }">
               <tiny-recycle-scroller
                 ref="scrollbar"
@@ -407,7 +394,7 @@
             </div>
           </template>
           <tiny-scrollbar
-            v-if="!optimization && renderType !== 'tree'"
+            v-if="!optimization"
             ref="scrollbar"
             tag="ul"
             :wrap-class="[
@@ -421,7 +408,7 @@
             <slot name="dropdown"></slot>
             <div
               v-if="multiple && showCheck && showAlloption && !state.multipleLimit && !state.query && !remote"
-              class="whitespace-nowrap box-border py-0 h-10 leading-10 sm:h-8 sm:leading-8 text-sm sm:text-xs pl-0 pr-3 sm:px-3 my-1 sm:m-1 rounded cursor-pointer"
+              class="whitespace-nowrap box-border py-0 h-10 leading-10 sm:h-8 sm:leading-8 text-sm sm:text-xs pl-0 pr-3 sm:px-2 my-1 sm:m-1 rounded cursor-pointer"
               :class="[
                 {
                   hover: state.hoverIndex === -9 && state.selectCls !== 'checked-sur'
@@ -436,7 +423,10 @@
               <component
                 :is="`icon-${state.selectCls}`"
                 :class="
-                  m(['-mt-0.5 mr-2 fill-color-icon-secondary', state.selectCls !== 'check' && 'fill-color-brand'])
+                  m([
+                    '-mt-0.5 mr-2 fill-color-icon-secondary w-3.5 h-3.5',
+                    state.selectCls !== 'check' && 'fill-color-brand text-color-brand'
+                  ])
                 "
               />
               <span :class="[state.selectCls === 'checked-sur' ? 'text-color-brand' : 'text-color-text-primary']">
@@ -454,7 +444,7 @@
                 !state.emptyText &&
                 !remote
               "
-              class="whitespace-nowrap box-border py-0 h-10 leading-10 sm:h-8 sm:leading-8 text-sm sm:text-xs pl-0 pr-3 sm:px-3 my-1 sm:m-1 rounded cursor-pointer"
+              class="whitespace-nowrap box-border py-0 h-10 leading-10 sm:h-8 sm:leading-8 text-sm sm:text-xs pl-0 pr-3 sm:px-2 my-1 sm:m-1 rounded cursor-pointer"
               :class="[
                 {
                   hover: state.hoverIndex === -9 && state.filteredSelectCls !== 'checked-sur'
@@ -503,11 +493,7 @@
             </slot>
           </tiny-scrollbar>
 
-          <template
-            v-if="
-              renderType !== 'tree' && state.emptyText && (!allowCreate || loading || (allowCreate && state.emptyFlag))
-            "
-          >
+          <template v-if="state.emptyText && (!allowCreate || loading || (allowCreate && state.emptyFlag))">
             <div v-if="loadingText || slots.empty">
               <slot name="empty" v-if="slots.empty"></slot>
               <p class="py-2.5 px-0 m-0 text-center text-color-text-secondary text-xs" v-else>
@@ -541,14 +527,15 @@
 </template>
 
 <script>
-import { renderless, api } from '@opentiny/vue-renderless/select/vue'
+import { renderless, api } from '@opentiny/vue-renderless/base-select/vue'
 import { props, setup, directive, defineComponent } from '@opentiny/vue-common'
 import TinyTag from '@opentiny/vue-tag'
 import TinyInput from '@opentiny/vue-input'
 import TinyOption from '@opentiny/vue-option'
 import TinyScrollbar from '@opentiny/vue-scrollbar'
 import TinySelectDropdown from '@opentiny/vue-select-dropdown'
-import { Clickoutside } from '@opentiny/vue-directive'
+import TinyButton from '@opentiny/vue-button'
+import { Clickoutside, AutoTip } from '@opentiny/vue-directive'
 import {
   iconClose,
   iconHalfselect,
@@ -556,9 +543,14 @@ import {
   iconCheckedSur,
   iconCopy,
   iconLoading,
-  iconChevronRight
+  iconChevronRight,
+  iconDownWard,
+  iconSearch,
+  iconEllipsis,
+  iconChevronUp,
+  iconAddCircle,
+  iconLoadingShadow
 } from '@opentiny/vue-icon'
-import TinyTree from '@opentiny/vue-tree'
 import TinyTooltip from '@opentiny/vue-tooltip'
 import TinyFilterBox from '@opentiny/vue-filter-box'
 import RecycleScroller from '@opentiny/vue-recycle-scroller'
@@ -589,10 +581,12 @@ export default defineComponent({
     'visible-change',
     'handleDropdownClick',
     'dropdown-click',
-    'confirm'
+    'confirm',
+    'top-create-click'
   ],
   directives: directive({
     Clickoutside,
+    AutoTip,
     popover: {
       bind(el, binding, vnode) {
         getReference(el, binding, vnode)
@@ -606,8 +600,8 @@ export default defineComponent({
     TinyTag,
     TinyInput,
     TinyOption,
-    TinyTree,
     TinyScrollbar,
+    TinyButton,
     TinyFilterBox,
     TinyTooltip,
     IconClose: iconClose(),
@@ -618,6 +612,12 @@ export default defineComponent({
     IconCheckedSur: iconCheckedSur(),
     IconLoading: iconLoading(),
     IconChevronRight: iconChevronRight(),
+    IconDownWard: iconDownWard(),
+    IconSearch: iconSearch(),
+    IconEllipsis: iconEllipsis(),
+    IconChevronUp: iconChevronUp(),
+    IconAddCircle: iconAddCircle(),
+    IconLoadingShadow: iconLoadingShadow(),
     TinyRecycleScroller: RecycleScroller
   },
   props: [
@@ -665,9 +665,6 @@ export default defineComponent({
     'popperAppendToBody',
     'showDropdown',
     'expandTags',
-    'renderType',
-    'gridOp',
-    'treeOp',
     'delay',
     'cacheOp',
     'isDropInheritWidth',

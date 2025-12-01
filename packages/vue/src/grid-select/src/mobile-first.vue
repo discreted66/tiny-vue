@@ -1,8 +1,7 @@
 <template>
   <tiny-base-select
     ref="baseSelectRef"
-    data-tag="tiny-grid-select"
-    class="w-full overflow-hidden"
+    class="tiny-grid-select"
     v-model="state.modelValue"
     :clearable="clearable"
     :multiple="multiple"

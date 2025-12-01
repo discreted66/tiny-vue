@@ -32,23 +32,9 @@ export const api = [
 export const renderless = (props, { reactive, computed, watch, onMounted, nextTick }, { vm, emit }) => {
   const api = {}
 
-  // 初始化 gridData，支持 { data: [], columns: [] } 格式
-  const initGridData = () => {
-    if (props.gridOp) {
-      if (props.gridOp.data) {
-        return props.gridOp.data
-      } else if (Array.isArray(props.gridOp)) {
-        return props.gridOp
-      } else {
-        return props.gridOp
-      }
-    }
-    return { data: [], columns: [] }
-  }
-
   const state = reactive({
     value: props.modelValue,
-    gridData: initGridData(),
+    gridData: (props.gridOp && props.gridOp.data) || [],
     remoteData: [],
     selected: props.multiple ? [] : {},
     currentKey: props.multiple ? '' : props.modelValue,
@@ -76,20 +62,14 @@ export const renderless = (props, { reactive, computed, watch, onMounted, nextTi
   // 计算属性：获取已选中的行 value 数组（需要在 api 对象创建之后）
   state.gridCheckedData = computed(() => api.getcheckedData())
 
+  // 监听 gridOp.data 的变化，参考 tree-select 的实现
   watch(
-    () => props.gridOp,
-    (gridOp) => {
-      if (gridOp) {
-        if (gridOp.data) {
-          // 格式：{ data: [], columns: [] }
-          state.gridData = gridOp.data
-        } else if (Array.isArray(gridOp)) {
-          // 格式：直接是数组
-          state.gridData = gridOp
-        } else {
-          // 格式：{ data: [], columns: [] } 整体作为 gridData
-          state.gridData = gridOp
-        }
+    () => props.gridOp && props.gridOp.data,
+    (data) => {
+      if (data) {
+        state.gridData = Array.isArray(data) ? data : []
+      } else {
+        state.gridData = []
       }
     },
     { immediate: true, deep: true }
