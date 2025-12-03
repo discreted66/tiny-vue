@@ -358,6 +358,7 @@ const initApi = ({
   isMobileFirstMode,
   designConfig
 }) => {
+  console.log('designConfig1111111111111111', designConfig)
   Object.assign(api, {
     state,
     maskState,
