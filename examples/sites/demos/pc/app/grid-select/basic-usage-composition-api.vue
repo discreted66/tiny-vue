@@ -1,9 +1,11 @@
 <template>
   <p>场景 1：单选</p>
+  <br />
   <tiny-grid-select v-model="value" :grid-op="gridOpSingle" value-field="id" text-field="city"></tiny-grid-select>
   <br />
   <br />
   <p>场景 2：多选</p>
+  <br />
   <tiny-grid-select
     v-model="value2"
     multiple
@@ -49,14 +51,6 @@ const gridOpMulti = reactive({
     { field: 'city', title: '城市', width: 60 }
   ]
 })
-const gridOpMulti = reactive({
-  data: [
-    { id: '001', area: '华南区', province: '广东省', city: '广州市' },
-    { id: '002', area: '华南区', province: '广东省', city: '深圳市' },
-    { id: '003', area: '华南区', province: '广东省', city: '珠海市' },
-    { id: '004', area: '华南区', province: '广东省', city: '佛山市' },
-    { id: '005', area: '华南区', province: '广东省', city: '中山市' }
-  ],
 </script>
 
 <style scoped>

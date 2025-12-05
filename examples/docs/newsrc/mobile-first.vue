@@ -23,10 +23,7 @@
           <div v-html="state.currDemo?.desc['zh-CN']"></div>
         </div>
         <!-- 预览 -->
-        <div
-          :id="state.currDemo?.demoId"
-          class="rel px20 minh200"
-        >
+        <div :id="state.currDemo?.demoId" class="rel px20 minh200">
           <config-provider :design="design">
             <component :is="state.comp"></component>
           </config-provider>
