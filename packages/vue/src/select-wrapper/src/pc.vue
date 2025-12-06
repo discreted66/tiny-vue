@@ -263,7 +263,7 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
-    InputBoxType: {
+    inputBoxType: {
       type: String,
       default: 'input',
       validator: (value: string) => ['input', 'underline'].includes(value)
