@@ -232,7 +232,37 @@ export const parsedValue =
         return result.map((date) => getDateWithNewTimezone(date, from, to, timezoneOffset))
       }
 
-      return getDateWithNewTimezone(result || props.modelValue, from, to, timezoneOffset)
+      // 如果result是有效的Date对象，直接使用时区转换
+      if (result && isDate(result) && !isNaN(result.getTime())) {
+        return getDateWithNewTimezone(result, from, to, timezoneOffset)
+      }
+
+      // 如果result是null或无效的Date对象，需要将props.modelValue转换为Date对象
+      // 特别是当valueFormat是timestamp时，props.modelValue可能是时间戳数字
+      let fallbackDate: Date | null = null
+      if (props.modelValue) {
+        if (state.valueFormat === DATEPICKER.TimesTamp) {
+          // 时间戳格式：将数字转换为Date对象
+          if (typeof props.modelValue === 'number' || typeof props.modelValue === 'string') {
+            fallbackDate = new Date(Number(props.modelValue))
+          } else if (isDate(props.modelValue)) {
+            fallbackDate = props.modelValue
+          } else {
+            fallbackDate = toDate1(props.modelValue) as Date | null
+          }
+        } else {
+          // 其他格式：尝试转换为Date对象
+          fallbackDate = isDate(props.modelValue) ? props.modelValue : (toDate1(props.modelValue) as Date | null)
+        }
+      }
+
+      // 确保fallbackDate是有效的Date对象后再使用时区转换
+      if (fallbackDate && isDate(fallbackDate) && !isNaN(fallbackDate.getTime())) {
+        return getDateWithNewTimezone(fallbackDate, from, to, timezoneOffset)
+      }
+
+      // 如果所有转换都失败，返回null而不是undefined
+      return null
     }
 
     const trans = (value) => (typeof value === 'string' || isNumber(value) ? toDate1(value) : value)

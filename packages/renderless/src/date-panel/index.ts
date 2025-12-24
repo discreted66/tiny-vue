@@ -258,8 +258,16 @@ export const handleTimePick =
   ({ api, state, t }) =>
   (value, visible, first) => {
     if (isDate1(value)) {
-      const newDate = state.value
-        ? modifyTime(state.value, value.getHours(), value.getMinutes(), value.getSeconds())
+      // 确保state.value是有效的Date对象，如果不是则使用state.date或默认值
+      const baseDate =
+        state.value && isDate1(state.value) && !isNaN(state.value.getTime())
+          ? state.value
+          : state.date && isDate1(state.date)
+            ? state.date
+            : api.getDefaultValue()
+
+      const newDate = baseDate
+        ? modifyTime(baseDate, value.getHours(), value.getMinutes(), value.getSeconds())
         : modifyWithTimeString(api.getDefaultValue(), state.defaultTime, t)
 
       state.date = newDate
@@ -306,8 +314,16 @@ export const handleDatePick =
       return
     }
     if (state.selectionMode === DATEPICKER.Day) {
-      let newDate = state.value
-        ? modifyDate(state.value, value.getFullYear(), value.getMonth(), value.getDate())
+      // 确保state.value是有效的Date对象，如果不是则使用state.date或默认值
+      const baseDate =
+        state.value && isDate1(state.value) && !isNaN(state.value.getTime())
+          ? state.value
+          : state.date && isDate1(state.date)
+            ? state.date
+            : null
+
+      let newDate = baseDate
+        ? modifyDate(baseDate, value.getFullYear(), value.getMonth(), value.getDate())
         : modifyWithTimeString(value, state.defaultTime, t)
 
       if (!api.checkDateWithinRange(newDate)) {
@@ -641,11 +657,11 @@ export const getRenderTz =
 
     // 规避因国际化lang中划线以及下划线匹配不到时区数据
     const lang = state.lang.replace(/[-_]/g, '').toLowerCase()
-    Object.keys(value).forEach(key => {
+    Object.keys(value).forEach((key) => {
       if (key.replace(/[-_]/g, '').toLowerCase() === lang) {
         value[lang] = value[key]
       }
-    });
+    })
 
     state.renderTzdata = value[lang]
     if (state.renderTzdata) {
